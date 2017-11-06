@@ -23,9 +23,9 @@ render(
       <Router>
           <Switch>
               <Route exact path='/' component={App}/>
-              <Route path='/search?q=:q' component={App}/>
+              <Route path='/search' component={App}/>
           </Switch>
       </Router>
   </Provider>,
   document.getElementById('root')
-);
+)

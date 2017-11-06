@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { search } from '../actions'
 import { fetchTwitter } from '../actions/index';
 
 class SearchForm extends Component{
    static propTypes = {
        dispatch: PropTypes.func.isRequired,
-       input: PropTypes.string
+       history: PropTypes.object.isRequired,
+       location: PropTypes.object.isRequired,
    }
 
    render() {
@@ -15,14 +15,14 @@ class SearchForm extends Component{
            <div>
                <form action="search" className="SearchForm" onSubmit={e => {
                    e.preventDefault()
-                   if (!this.props.input.trim()) {
+                   if (!this.input.value.trim()) {
                        return
                    }
-                   this.props.dispatch(search(this.props.input))
+                   const url = `/search?q=${this.input.value}`;
+                   this.props.history.push(url);
+                   this.props.dispatch(fetchTwitter(this.input.value))
                }}>
-                   <input ref={q => {
-                       this.props.input = q
-                   }}
+                   <input ref={(input) => this.input = input}
                           type="text"
                           autoComplete="off" //TODO: add hashtag suggests
                           className="SearchForm--input col-md-4"
@@ -39,8 +39,8 @@ class SearchForm extends Component{
 }
 
 SearchForm.componentDidMount = function() {
-    const { dispatch } = this.props;
-    this.props.dispatch(fetchTwitter(this.props.input))
+    //const { dispatch } = this.props;
+    this.props.dispatch(fetchTwitter(this.input.value))
 };
 
 export default connect()(SearchForm)

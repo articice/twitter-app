@@ -1,14 +1,38 @@
-import React from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import SearchForm from './SearchForm'
-import Filters from './Filters'
-import VisibleFeed from '../containers/VisibleFeed'
+import Feed from '../containers/Feed'
+import { fetchTwitter } from '../actions'
+const queryString = require('query-string');
 
-const App = ({ match: { params }}) => (
-  <div>
-    <SearchForm />
-    <Filters />
-    <VisibleFeed q={ params.q || '#JavaScript' }/>
-  </div>
-)
+class App extends Component {
+    static propTypes = {
+        location: PropTypes.object.isRequired,
+    }
 
-export default App
+    componentDidMount() {
+        const { dispatch } = this.props;
+    }
+
+    render() {
+        const { q } = queryString.parse(this.props.location.search);
+
+        return (
+            <div>
+                <SearchForm history={this.props.history}/>
+                <Feed query={ q || '#JavaScript' }/>
+            </div>
+        )
+    }
+
+}
+
+const mapStateToProps = state => {
+    return {
+        q: state.posts.query
+    }
+}
+
+
+export default connect(mapStateToProps)(App)

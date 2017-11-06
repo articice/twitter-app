@@ -9,6 +9,11 @@ export const search = (text) => ({
   q: text
 })
 
+export const request = (query) => ({
+    type: REQUEST,
+    query,
+})
+
 export const receive = (query, items) => ({
     type: RECEIVE,
     query,
@@ -22,12 +27,8 @@ export const error = (query, err) => ({
     err
 })
 
-export const setVisibilityFilter = (filter) => ({
-  type: 'SET_VISIBILITY_FILTER',
-  filter
-})
-
 const fetchTwitterSearch = query => dispatch => {
+  dispatch(request(query))
   return fetch(`http://localhost:3001/search?q=${query}`)
     .then(response => response.json())
     .then(json => {

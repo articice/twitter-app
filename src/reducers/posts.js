@@ -3,21 +3,7 @@ import {
     REQUEST, RECEIVE
 } from '../actions'
 
-const postsTwitter = (state = { }, action) => {
-    switch (action.type) {
-        case INVALIDATE:
-        case RECEIVE:
-        case REQUEST:
-            return {
-                ...state,
-                items: posts(state[action.query], action)
-            }
-        default:
-            return state
-    }
-}
-
-const posts = (state = {
+const postsTwitter = (state = {
     isFetching: false,
     didInvalidate: false,
     items: []
@@ -31,6 +17,7 @@ const posts = (state = {
         case REQUEST:
             return {
                 ...state,
+                query: action.query,
                 isFetching: true,
                 didInvalidate: false
             }
@@ -39,6 +26,7 @@ const posts = (state = {
                 ...state,
                 isFetching: false,
                 didInvalidate: false,
+                query: action.query,
                 items: action.items,
                 lastUpdated: action.receivedAt
             }

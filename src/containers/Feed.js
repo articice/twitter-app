@@ -1,25 +1,61 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { fetchTwitter } from '../actions'
 import Post from '../components/Post'
 
-const Feed = ({ posts, onPostClick }) => (
-  <div class="posts-container">
-    {posts.map(post =>
-      <Post
-        key={post.id}
-        {...post}
+class Feed extends Component {
 
-      />
-    )}
-  </div>
-)
+    static propTypes = {
+        posts: PropTypes.array.isRequired,
+    }
 
-Feed.propTypes = {
-  posts: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    created_at: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+    render() {
+        const { query, posts, isFetching, lastUpdated } = this.props
+        const isEmpty = posts.length === 0
+
+        return (
+            <div class="row">
+            {lastUpdated &&
+            <span>
+              Last updated at {new Date(lastUpdated).toLocaleTimeString()}.
+                {' '}
+            </span>
+            }
+            <div class="posts-container">
+                {posts.map(post =>
+                    <Post
+                        key={post.id}
+                        {...post}
+
+                    />
+                )}
+            </div>
+            </div>
+        )
+    }
+
+    componentDidMount() {
+        const { dispatch, query } = this.props;
+        dispatch(fetchTwitter(query));
+    }
 }
 
-export default Feed
+
+const mapStateToProps = state => {
+    const {
+        isFetching,
+        lastUpdated,
+        items,
+        query
+    } = state.posts;
+
+    return {
+        query,
+        posts: items || [],
+        isFetching,
+        lastUpdated
+    }
+}
+
+export default connect(mapStateToProps)(Feed)
